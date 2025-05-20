@@ -69,6 +69,9 @@ pub enum CustomError {
     #[msg("Price lower than slippage")]
     InvalidPriceOraclePriceLower,
 
+    #[msg("Invalid pool state")]
+    InvalidPoolState,
+    
     #[msg("Invalid payload signature")]
     WrongSignature,
 }
