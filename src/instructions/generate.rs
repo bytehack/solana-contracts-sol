@@ -48,7 +48,10 @@ pub fn generate_handler<'info>(
     require!(is_valid_signature, CustomError::WrongSignature);
 
     // Get ratio of 1 c8nt in wsol
-    let (_, ratio_1_c8nt_in_wsol) = utils::token_price(ctx.accounts.pool_wsol_vault.amount, ctx.accounts.pool_c8nt_vault.amount);
+    let (_, ratio_1_c8nt_in_wsol) = utils::token_price(
+        ctx.accounts.pool_wsol_vault.amount,
+        ctx.accounts.pool_c8nt_vault.amount,
+    )?;
 
     // Get ratio of 1 wsol in usdt
     let pool_state_data: Vec<u8> = ctx.accounts.pool_usdt_wsol.try_borrow_data()?.to_vec();
