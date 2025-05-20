@@ -1,14 +1,12 @@
 //src/utils.rs
-use anchor_lang::prelude::AccountInfo;
-use anchor_lang::prelude::AccountMeta;
-use anchor_lang::prelude::CpiContext;
-use anchor_lang::prelude::ProgramError;
+use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 use anchor_lang::Key;
 use anchor_spl::token::Burn;
 use solana_program::instruction::Instruction;
 use solana_program::program::invoke;
 use solana_program::program::invoke_signed;
+use crate::CustomError;
 
 pub const Q32: u128 = (u32::MAX as u128) + 1; // 2^32
 pub const Q_RATIO: f64 = 1.0001;
@@ -20,10 +18,11 @@ pub fn tick_to_price(tick: i32) -> f64 {
 pub fn token_price(
     token_0_amount: u64, //
     token_1_amount: u64, //
-) -> (f64, f64) {
+) -> Result<(f64, f64), ProgramError> {
+    require!(token_0_amount > 0 && token_1_amount > 0, CustomError::InvalidPoolState);
     let token_0_amount_x32: u128 = token_1_amount as u128 * Q32 as u128 / token_0_amount as u128;
     let token_1_amount_x32: u128 = token_0_amount as u128 * Q32 as u128 / token_1_amount as u128;
-    return (token_0_amount_x32 as f64 / (2.0_f64.powf(32.0)), token_1_amount_x32 as f64 / (2.0_f64.powf(32.0)));
+    Ok((token_0_amount_x32 as f64 / (2.0_f64.powf(32.0)), token_1_amount_x32 as f64 / (2.0_f64.powf(32.0))))
 }
 
 pub fn wrap_wsol<'info>(
